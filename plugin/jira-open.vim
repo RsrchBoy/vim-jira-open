@@ -7,6 +7,18 @@ function! s:get_visual_selection()
   return join(lines, "\n")
 endfunction
 
+" Try to guess at what browser we should be using; 'open' for macs,
+" 'sensible-browser' for other *nix'es
+
+if !exists('g:jira_browser_cmd')
+    if has("mac") || has("macunix")
+        let g:jira_browser_cmd = 'open'
+    elseif has("unix")
+        let g:jira_browser_cmd = 'sensible-browser'
+    endif
+endif
+
+
 " When cursor is over a jira ticket number, for example EXT-1234, launch
 " browser to for ticket page.
 function! JiraOpen()
@@ -23,7 +35,7 @@ function! JiraOpen()
     return 0
   endif
   let key = s:get_visual_selection()
-  let cmd = ':!open ' . g:jira_browse_url . key
+  let cmd = ':!' . g:jira_browser_cmd . ' ' . g:jira_browse_url . key
   execute cmd
 endfun
 
